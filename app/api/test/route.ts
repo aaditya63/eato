@@ -1,0 +1,6 @@
+// app/api/auth/signup/route.ts
+import { NextResponse } from "next/server";
+
+export async function GET(req: Request) {
+  return NextResponse.json({ success: true, message: "Application is live" });
+}
