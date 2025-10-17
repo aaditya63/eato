@@ -1,0 +1,195 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+
+export default function Signup() {
+  type signupData = {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  };
+
+  const [signupError, setSignupError] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [signupForm, setSignupForm] = useState<signupData>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSignupForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = () => {
+    const errObj = {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
+
+    if (signupForm.name.length === 0) errObj.name = "Enter the Name";
+    else errObj.name = "";
+
+    if (signupForm.email.length === 0)
+      errObj.email = "Enter your Email address";
+    else if (
+      !signupForm.email.includes("@") ||
+      !signupForm.email.endsWith(".com")
+    )
+      errObj.email = "Please enter a valid email address!!";
+    else errObj.email = "";
+
+    if (signupForm.password.length === 0)
+      errObj.password = "Please Enter the Password";
+    else if (signupForm.password.length < 8)
+      errObj.password = "Password must be at least 8 characters long";
+    else if (signupForm.password !== signupForm.confirmPassword)
+      errObj.confirmPassword = "Passwords do not match";
+    else {
+      errObj.confirmPassword = "";
+      errObj.password = "";
+    }
+
+    if (signupForm.confirmPassword.length === 0)
+      errObj.confirmPassword = "Please Re Enter the Password";
+
+    const hasErrors = Object.values(errObj).some((error) => error.length > 0);
+
+    setSignupError(errObj);
+    if (hasErrors) {
+      return;
+    }
+
+    //API call
+    if (errObj) console.log("Form Submited");
+    console.log(signupForm);
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+      <div className="hidden md:block w-full">
+        <div className="relative flex items-center bg-[#FFFD8F] h-[100%] rounded-tr-[25%] ">
+          <div className="absolute bottom-1/5 flex justify-center">
+            <Image
+              className=""
+              src="/assets/signupmiddlesandwitch.PNG"
+              alt="Project Logo"
+              width={500} 
+              height={180}
+            />
+          </div>
+          <div className="flex-col items-center justify-center h-full w-full">
+            <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">Where Cravings Become Comfort.</p>
+            <p className="mt-10 text-center pr-10 lg:pr-20 text-[#043915] font-bold text-7xl font-['Fantasy']">Let's EatO.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className=" h-full w-full flex justify-center">
+        <div className="relative rounded-2xl p-8 pb-0 w-full max-w-lg">
+          <h1 className="pt-5 md:pt-10 text-center text-[#043915] font-bold text-6xl font-['Fantasy']">
+            EatO
+          </h1>
+          <h2 className="text-xl font-bold mb-6 text-center">
+            Sign Up and Get upto 50% Off on your First Order
+          </h2>
+
+          <div className="space-y-6">
+            <div className="relative">
+              <input
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={signupForm.name}
+                maxLength={30}
+                onChange={handleChange}
+                className={`w-full ${
+                  signupError.name ? "border-red-500" : ""
+                } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
+              />
+              <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
+                {signupError.name}
+              </p>
+            </div>
+            <div className="relative">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={signupForm.email}
+                maxLength={40}
+                onChange={handleChange}
+                className={`w-full ${
+                  signupError.email ? "border-red-500" : ""
+                } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
+              />
+              <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
+                {signupError.email}
+              </p>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                name="password"
+                placeholder="Password"
+                value={signupForm.password}
+                maxLength={30}
+                onChange={handleChange}
+                className={`w-full ${
+                  signupError.password ? "border-red-500" : ""
+                } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
+              />
+              <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
+                {signupError.password}
+              </p>
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={signupForm.confirmPassword}
+                onChange={handleChange}
+                maxLength={30}
+                className={`w-full ${
+                  signupError.confirmPassword ? "border-red-500" : ""
+                } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
+              />
+              <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
+                {signupError.confirmPassword}
+              </p>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              className="w-full bg-[#043915] text-white py-2 rounded-md cursor-pointer transition-all"
+            >
+              Sign Up
+            </button>
+          </div>
+            <p className="text-center font-[500] mt-3 ">Already have an account? <span className="text-blue-500 cursor-pointer hover:underline"> Proceed to Signin </span></p>
+          <div className="flex justify-center">
+            <Image
+              className=""
+              src="/assets/signupBottomImage.PNG"
+              alt="Project Logo"
+              width={300} // Always include width and height
+              height={180}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

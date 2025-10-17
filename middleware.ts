@@ -6,29 +6,32 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get('token')?.value;
+  // const token = req.cookies.get('token')?.value;
   
-  const url = req.nextUrl.clone();
+  // const url = req.nextUrl.clone();
 
-  // public routes
-  if (url.pathname.startsWith('/api/auth') || url.pathname.startsWith('/_next')) {
-    return NextResponse.next();
-  }
+  // // public routes
+  // if (url.pathname.startsWith('/api/auth') || url.pathname.startsWith('/_next')) {
+  //   return NextResponse.next();
+  // }
 
-  if (!token) {
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
+  // if (!token) {
+  //   url.pathname = '/login';
+  //   return NextResponse.redirect(url);
+  // }
 
-  try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    // Optionally forward user info via headers:
-    // req.headers.set('x-user-id', (payload as any).sub.toString());
-    return NextResponse.next();
-  } catch (err) {
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
+  // try {
+  //   const payload = jwt.verify(token, JWT_SECRET);
+  //   // Optionally forward user info via headers:
+  //   // req.headers.set('x-user-id', (payload as any).sub.toString());
+  //   return NextResponse.next();
+  // } catch (err) {
+  //   url.pathname = '/login';
+  //   return NextResponse.redirect(url);
+  // }
+
+  //Byppass all for now
+  return NextResponse.next();
 
 }
 
