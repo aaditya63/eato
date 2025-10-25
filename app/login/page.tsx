@@ -1,9 +1,34 @@
 "use client";
 
+import { loginUser } from "@/lib/redux/auth/authThunk";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Login() {
+  const dispatch = useAppDispatch();
+  const auth = useAppSelector((state) => state.auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (auth.isUserLoggedIn === true) {
+      toast.success("Login Successful", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      router.push("/");
+    }
+  }, [auth.isUserLoggedIn]);
+
   type loginData = {
     email: string;
     password: string;
@@ -13,7 +38,7 @@ export default function Login() {
     email: "",
     password: "",
   });
-  const [loignForm, setLoginForm] = useState<loginData>({
+  const [loginForm, setLoginForm] = useState<loginData>({
     email: "",
     password: "",
   });
@@ -23,22 +48,21 @@ export default function Login() {
     setLoginForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errObj = {
       email: "",
       password: "",
     };
 
-    if (loignForm.email.length === 0)
-      errObj.email = "Enter your Email address";
+    if (loginForm.email.length === 0) errObj.email = "Enter your Email address";
     else if (
-      !loignForm.email.includes("@") ||
-      !loignForm.email.endsWith(".com")
+      !loginForm.email.includes("@") ||
+      !loginForm.email.endsWith(".com")
     )
       errObj.email = "Please enter a valid email address!!";
     else errObj.email = "";
 
-    if (loignForm.password.length === 0)
+    if (loginForm.password.length === 0)
       errObj.password = "Please Enter the Password";
     else {
       errObj.password = "";
@@ -52,8 +76,17 @@ export default function Login() {
     }
 
     //API call
-    if (errObj) console.log("Form Submited");
-    console.log(loignForm);
+    try {
+      const res = await dispatch(
+        loginUser({ email: loginForm.email, password: loginForm.password })
+      ).unwrap();
+    } catch (err) {
+      if (err === "Invalid Password") {
+        setLoginError((prev) => ({...prev,password: "Invalid Password!",}));
+      }else{
+        setLoginError((prev) => ({...prev,email: "Invalid Credentials!",}));
+      }
+    }
   };
 
   return (
@@ -70,8 +103,12 @@ export default function Login() {
             />
           </div>
           <div className="flex-col items-center justify-center h-full w-full">
-            <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">Your Happy Place for Happy Plates.</p>
-            <p className="mt-10 text-center pr-10 lg:pr-20 text-[#043915] font-bold text-7xl font-['Fantasy']">Let's EatO.</p>
+            <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">
+              Your Happy Place for Happy Plates.
+            </p>
+            <p className="mt-10 text-center pr-10 lg:pr-20 text-[#043915] font-bold text-7xl font-['Fantasy']">
+              Let's EatO.
+            </p>
           </div>
         </div>
       </div>
@@ -91,7 +128,7 @@ export default function Login() {
                 type="email"
                 name="email"
                 placeholder="Email Address"
-                value={loignForm.email}
+                value={loginForm.email}
                 maxLength={40}
                 onChange={handleChange}
                 className={`w-full ${
@@ -108,7 +145,7 @@ export default function Login() {
                 type="text"
                 name="password"
                 placeholder="Password"
-                value={loignForm.password}
+                value={loginForm.password}
                 maxLength={30}
                 onChange={handleChange}
                 className={`w-full ${
@@ -127,7 +164,13 @@ export default function Login() {
               Sign In
             </button>
           </div>
-            <p className="text-center font-[500] mt-3 ">Don't have an account? <span className="text-blue-500 cursor-pointer hover:underline"> Proceed to Sign up </span></p>
+          <p className="text-center font-[500] mt-3 ">
+            Don't have an account?{" "}
+            <span className="text-blue-500 cursor-pointer hover:underline">
+              {" "}
+              Proceed to Sign up{" "}
+            </span>
+          </p>
           <div className="flex justify-center">
             <Image
               className=""
