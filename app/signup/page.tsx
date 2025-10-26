@@ -216,7 +216,7 @@ export default function Signup() {
           </div>
           <p className="text-center font-[500] mt-3 ">
             Already have an account?{" "}
-            <span className="text-blue-500 cursor-pointer hover:underline">
+            <span onClick={()=>router.push("/login")} className="text-blue-500 cursor-pointer hover:underline">
               {" "}
               Proceed to Signin{" "}
             </span>

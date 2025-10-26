@@ -19,7 +19,7 @@ export default function Navbar({}: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-5 w-full h-[50px] bg-[#FFFD8F] p-2">
+      <div className={`${ pathname.includes("login") || pathname.includes("signup") ? "hidden" : ""} grid grid-cols-2 md:grid-cols-5 w-full h-[50px] bg-[#FFFD8F] p-2`}>
         <div className="flex justify-start items-center gap-2">
           <button
             onClick={() => setIsOpen(true)}
