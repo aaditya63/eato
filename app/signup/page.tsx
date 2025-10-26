@@ -1,7 +1,10 @@
 "use client";
 
+import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Signup() {
   type signupData = {
@@ -10,6 +13,8 @@ export default function Signup() {
     password: string;
     confirmPassword: string;
   };
+
+  const router = useRouter()
 
   const [signupError, setSignupError] = useState({
     name: "",
@@ -29,7 +34,7 @@ export default function Signup() {
     setSignupForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errObj = {
       name: "",
       email: "",
@@ -71,8 +76,35 @@ export default function Signup() {
     }
 
     //API call
-    if (errObj) console.log("Form Submited");
-    console.log(signupForm);
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`,
+        {
+          name: signupForm.name,
+          email: signupForm.email,
+          password: signupForm.password,
+        }
+      );
+      if (res.data.success) {
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      router.push("/login")
+    } catch (err:any) {
+      console.log(err)
+      toast.error(err.response.data.error)
+    }
+
+    // if (errObj) console.log("Form Submited");
+    // console.log(signupForm);
   };
 
   return (
@@ -84,13 +116,17 @@ export default function Signup() {
               className=""
               src="/assets/signupmiddlesandwitch.PNG"
               alt="Project Logo"
-              width={500} 
+              width={500}
               height={180}
             />
           </div>
           <div className="flex-col items-center justify-center h-full w-full">
-            <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">Where Cravings Become Comfort.</p>
-            <p className="mt-10 text-center pr-10 lg:pr-20 text-[#043915] font-bold text-7xl font-['Fantasy']">Let's EatO.</p>
+            <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">
+              Where Cravings Become Comfort.
+            </p>
+            <p className="mt-10 text-center pr-10 lg:pr-20 text-[#043915] font-bold text-7xl font-['Fantasy']">
+              Let's EatO.
+            </p>
           </div>
         </div>
       </div>
@@ -178,7 +214,13 @@ export default function Signup() {
               Sign Up
             </button>
           </div>
-            <p className="text-center font-[500] mt-3 ">Already have an account? <span className="text-blue-500 cursor-pointer hover:underline"> Proceed to Signin </span></p>
+          <p className="text-center font-[500] mt-3 ">
+            Already have an account?{" "}
+            <span className="text-blue-500 cursor-pointer hover:underline">
+              {" "}
+              Proceed to Signin{" "}
+            </span>
+          </p>
           <div className="flex justify-center">
             <Image
               className=""

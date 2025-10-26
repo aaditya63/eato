@@ -15,23 +15,28 @@ export async function POST(req: Request) {
 
   const existing = await prisma.user.findUnique({ where: { email } });
   
-  if (existing) return NextResponse.json({ error: 'Email exists' }, { status: 409 });
+  if (existing) return NextResponse.json({success:false, error: 'Email exists' }, { status: 409 });
 
   const hashed = await bcrypt.hash(password, 10);
+
   const user = await prisma.user.create({
     data: { email, password: hashed, name },
     select: { id: true, email: true, name: true },
   });
 
-  const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: '1h' });
+  
+  // const token = jwt.sign({ sub: user.id }, JWT_SECRET, { expiresIn: '1h' });
 
-  const cookie = serialize('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60, // 1 hour
-  });
+  // const cookie = serialize('token', token, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === 'production',
+  //   sameSite: 'lax',
+  //   path: '/',
+  //   maxAge: 60 * 60, // 1 hour
+  // });
 
-  return NextResponse.json({ user }, { status: 201, headers: { 'Set-Cookie': cookie } });
+  return NextResponse.json({ 
+    success:true,
+    message:"User Created Successfully!"
+   });
 }

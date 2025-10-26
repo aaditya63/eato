@@ -4,6 +4,7 @@ import "./globals.css";
 import { ReduxProvider } from "./helper/ReduxProvider";
 import AppInit from "./helper/Init";
 import Toast from "./helper/Toast";
+import Navbar from "@/components/header/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <ReduxProvider>
           <AppInit />
           <Toast/>
+          <Navbar/>
           {children}
         </ReduxProvider>
       </body>

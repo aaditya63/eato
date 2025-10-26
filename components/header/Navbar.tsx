@@ -1,13 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ShoppingCart, UserRound, Menu, X } from "lucide-react";
 import { Button } from "../ui/button";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {};
 
 export default function Navbar({}: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
     <>
@@ -24,13 +32,22 @@ export default function Navbar({}: Props) {
         </div>
 
         <div className="hidden md:flex col-span-3 justify-center items-center gap-3">
-          <Button className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer">
+          <Button
+            onClick={() => router.push("/")}
+            className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer"
+          >
             Home
           </Button>
-          <Button className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer">
+          <Button
+            onClick={() => { router.push("/menu"); }}
+            className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer"
+          >
             Menu
           </Button>
-          <Button className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer">
+          <Button
+            onClick={() => router.push("/about")}
+            className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer"
+          >
             About
           </Button>
         </div>
@@ -39,7 +56,7 @@ export default function Navbar({}: Props) {
           <Button className="bg-[#B0CE88] text-[#043915] font-[700] hover:bg-[#B0CE88] cursor-pointer">
             <ShoppingCart className="mr-1" /> Cart
           </Button>
-          <Button className="bg-[#B0CE88] text-[#043915] font-[700] hover:bg-[#B0CE88] cursor-pointer">
+          <Button onClick={() => router.push("/login")}  className="bg-[#B0CE88] text-[#043915] font-[700] hover:bg-[#B0CE88] cursor-pointer">
             <UserRound className="mr-1" /> Login
           </Button>
         </div>
@@ -62,18 +79,21 @@ export default function Navbar({}: Props) {
         {/* Sidebar content */}
         <div className="mt-10 flex flex-col gap-6">
           <Button
+            onClick={() => router.push("/")}
             variant="ghost"
             className="bg-transparent text-[#043915] text-lg font-bold hover:underline"
           >
             Home
           </Button>
           <Button
+            onClick={() => router.push("/menu")}
             variant="ghost"
             className="bg-transparent text-[#043915] text-lg font-bold hover:underline"
           >
             Menu
           </Button>
           <Button
+            onClick={() => router.push("/about")}
             variant="ghost"
             className="bg-transparent text-[#043915] text-lg font-bold hover:underline"
           >
