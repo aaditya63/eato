@@ -23,11 +23,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3️⃣ API routes
+  //
   if (pathname.startsWith("/api")) {
     // Allow login/signup API without token
 
-    const openApiPaths = ["/api/auth/login", "/api/auth/signup"];
+    const openApiPaths = ["/api/auth/login", "/api/auth/signup", "/api/auth/logout"];
     if (openApiPaths.includes(pathname)) {
       return NextResponse.next();
     }
@@ -52,7 +52,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // 4️⃣ Protected pages — require login
+  //  Protected pages — require login
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
@@ -65,7 +65,8 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-// Define which routes middleware should run on
+
+// middleware should run on
 export const config = {
   matcher: [
     "/",

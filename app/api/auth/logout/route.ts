@@ -1,4 +1,3 @@
-// app/api/auth/logout/route.ts
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
@@ -8,8 +7,8 @@ export async function POST() {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: 0, // expire immediately
+    maxAge: 0,
   });
 
-  return NextResponse.json({ message: 'logged out' }, { headers: { 'Set-Cookie': cookie } });
+  return NextResponse.json({ message: 'logged out',success:true }, { headers: { 'Set-Cookie': cookie } });
 }
