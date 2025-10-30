@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/loader/Spinner";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -34,6 +35,7 @@ export default function Signup() {
     setSignupForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [isLoading,setIsLoading] = useState(false)
   const handleSubmit = async () => {
     const errObj = {
       name: "",
@@ -77,6 +79,7 @@ export default function Signup() {
 
     //API call
     try {
+      setIsLoading(true);
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signup`,
         {
@@ -101,10 +104,9 @@ export default function Signup() {
     } catch (err:any) {
       console.log(err)
       toast.error(err.response.data.error)
+    }finally{
+      setIsLoading(false);
     }
-
-    // if (errObj) console.log("Form Submited");
-    // console.log(signupForm);
   };
 
   return (
@@ -209,9 +211,8 @@ export default function Signup() {
 
             <button
               onClick={handleSubmit}
-              className="w-full bg-[#043915] text-white py-2 rounded-md cursor-pointer transition-all"
-            >
-              Sign Up
+              className="w-full flex justify-center bg-[#043915] text-white py-2 rounded-md cursor-pointer transition-all">
+              {isLoading ? <span className="flex items-center gap-2"><LoadingSpinner size={20}/><p>Signing Up...</p> </span> : "Sign Up"}
             </button>
           </div>
           <p className="text-center font-[500] mt-3 ">

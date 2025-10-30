@@ -28,7 +28,6 @@ export default function Navbar({}: Props) {
 
   async function handleLogout() {
     try {
-      dispatch(logoutUser());
       const res = await axios.post("/api/auth/logout");
       if (res.data.success) {
         toast.success("Logged out successfully", {
@@ -41,6 +40,7 @@ export default function Navbar({}: Props) {
           progress: undefined,
           theme: "light",
         });
+        dispatch(logoutUser());
         router.push("/");
       }
     } catch (err) {

@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/loader/Spinner";
 import { loginUser } from "@/lib/redux/auth/authThunk";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import Image from "next/image";
@@ -48,6 +49,7 @@ export default function Login() {
     setLoginForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [isLoading,setIsLoading] = useState(false)
   const handleSubmit = async () => {
     const errObj = {
       email: "",
@@ -77,6 +79,7 @@ export default function Login() {
 
     //API call
     try {
+      setIsLoading(true);
       const res = await dispatch(
         loginUser({ email: loginForm.email, password: loginForm.password })
       ).unwrap();
@@ -86,6 +89,8 @@ export default function Login() {
       }else{
         setLoginError((prev) => ({...prev,email: "Invalid Credentials!",}));
       }
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -159,9 +164,11 @@ export default function Login() {
 
             <button
               onClick={handleSubmit}
-              className="w-full bg-[#043915] text-white py-2 rounded-md cursor-pointer transition-all"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center bg-[#043915] text-white py-2 rounded-md cursor-pointer transition-all"
             >
-              Sign In
+              {isLoading ? <span className="flex items-center gap-2"><LoadingSpinner size={20}/><p>Signing In...</p> </span> : "Sign In"}
+              
             </button>
           </div>
           <p className="text-center font-[500] mt-3 ">
@@ -174,9 +181,9 @@ export default function Login() {
           <div className="flex justify-center">
             <Image
               className=""
-              src="/assets/LoginRightImage.PNG"
+              src="/assets/LoginRight.PNG"
               alt="Project Logo"
-              width={300} // Always include width and height
+              width={300}
               height={180}
             />
           </div>
