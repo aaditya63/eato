@@ -8,14 +8,299 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  WALLET
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+// User Model
 model User {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique
-  password     String
-  name         String?
-  gender       String?          
-  age          Int?             
-  profilePhoto String?         
-  createdAt    DateTime  @default(now())    
-  updatedAt    DateTime @updatedAt @default(now())
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String   @map("password_hash")
+  name         String   @map("full_name")
+  phone        String?
+  role         UserRole @default(CUSTOMER)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  address      Address?
+  cart         Cart?
+  orders       Order[]
+  reviews      Review[]
+  couponUsages CouponUsage[]
+
+  @@map("users")
+}
+
+
+
+// Address
+model Address {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @unique @map("user_id")
+  addressLine1 String   @map("address_line1")
+  addressLine2 String?  @map("address_line2")
+  city         String
+  state        String
+  postalCode   String   @map("postal_code")
+  country      String   @default("India")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@map("addresses")
+}
+
+
+
+//Food Categories
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  imageUrl    String?  @map("image_url")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  foodItems FoodItem[]
+
+  @@map("categories")
+}
+
+
+
+// Food Items
+model FoodItem {
+  id              Int      @id @default(autoincrement())
+  categoryId      Int      @map("category_id")
+  name            String
+  description     String?
+  price           Decimal  @db.Decimal(10, 2)
+  discountPrice   Decimal? @map("discount_price") @db.Decimal(10, 2)
+  imageUrl        String?  @map("image_url")
+  isAvailable     Boolean  @default(true) @map("is_available")
+  isVegetarian    Boolean  @default(false) @map("is_vegetarian")
+  isVegan         Boolean  @default(false) @map("is_vegan")
+  preparationTime Int?     @map("preparation_time") // in minutes
+  calories        Int?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  category   Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+  reviews    Review[]
+
+  @@map("food_items")
+}
+
+
+
+// User's Shopping Cart
+model Cart {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique @map("user_id")
+  totalAmount Decimal  @default(0.00) @map("total_amount") @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cartItems CartItem[]
+
+  @@map("carts")
+}
+
+
+
+// Cart Items
+model CartItem {
+  id         Int      @id @default(autoincrement())
+  cartId     Int      @map("cart_id")
+  foodItemId Int      @map("food_item_id")
+  quantity   Int      @default(1)
+  price      Decimal  @db.Decimal(10, 2) // Price snapshot
+  subtotal   Decimal  @db.Decimal(10, 2)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  cart     Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  foodItem FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, foodItemId])
+  @@map("cart_items")
+}
+
+
+
+// Coupons
+model Coupon {
+  id                Int          @id @default(autoincrement())
+  code              String       @unique
+  description       String?
+  discountType      DiscountType @map("discount_type")
+  discountValue     Decimal      @map("discount_value") @db.Decimal(10, 2)
+  minOrderAmount    Decimal?     @map("min_order_amount") @db.Decimal(10, 2)
+  maxDiscountAmount Decimal?     @map("max_discount_amount") @db.Decimal(10, 2)
+  usageLimit        Int?         @map("usage_limit") // Total times coupon can be used
+  usageCount        Int          @default(0) @map("usage_count") // Times already used
+  isActive          Boolean      @default(true) @map("is_active")
+  validFrom         DateTime     @map("valid_from")
+  validUntil        DateTime     @map("valid_until")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  couponUsages CouponUsage[]
+
+  @@map("coupons")
+}
+
+
+
+// Coupon Usage Tracking
+model CouponUsage {
+  id              Int      @id @default(autoincrement())
+  couponId        Int      @map("coupon_id")
+  userId          Int      @map("user_id")
+  orderId         Int      @map("order_id")
+  discountApplied Decimal  @map("discount_applied") @db.Decimal(10, 2)
+  usedAt          DateTime @default(now()) @map("used_at")
+
+  // Relations
+  coupon Coupon @relation(fields: [couponId], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  order  Order  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@map("coupon_usage")
+}
+
+
+
+// Orders
+model Order {
+  id                    Int           @id @default(autoincrement())
+  orderNumber           String        @unique @map("order_number")
+  userId                Int           @map("user_id")
+  deliveryAddressId     Int           @map("delivery_address_id")
+  orderStatus           OrderStatus   @default(PENDING) @map("order_status")
+  paymentStatus         PaymentStatus @default(PENDING) @map("payment_status")
+  paymentMethod         PaymentMethod @map("payment_method")
+  subtotal              Decimal       @db.Decimal(10, 2)
+  taxAmount             Decimal       @map("tax_amount") @db.Decimal(10, 2)
+  deliveryFee           Decimal       @map("delivery_fee") @db.Decimal(10, 2)
+  discountAmount        Decimal       @default(0.00) @map("discount_amount") @db.Decimal(10, 2)
+  totalAmount           Decimal       @map("total_amount") @db.Decimal(10, 2)
+  estimatedDeliveryTime DateTime?     @map("estimated_delivery_time")
+  deliveredAt           DateTime?     @map("delivered_at")
+  cancelledAt           DateTime?     @map("cancelled_at")
+  cancellationReason    String?       @map("cancellation_reason")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
+  deliveryAddress     Address              @relation(fields: [deliveryAddressId], references: [id], onDelete: Restrict)
+  orderItems          OrderItem[]
+  paymentTransactions PaymentTransaction[]
+  reviews             Review[]
+  couponUsages        CouponUsage[]
+
+  @@map("orders")
+}
+
+
+
+// Order Items
+model OrderItem {
+  id              Int      @id @default(autoincrement())
+  orderId         Int      @map("order_id")
+  foodItemId      Int      @map("food_item_id")
+  quantity        Int
+  priceAtPurchase Decimal  @map("price_at_purchase") @db.Decimal(10, 2)
+  subtotal        Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodItem FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Restrict)
+
+  @@map("order_items")
+}
+
+
+
+// Payment Transactions
+model PaymentTransaction {
+  id                     Int           @id @default(autoincrement())
+  orderId                Int           @map("order_id")
+  transactionId          String?       @unique @map("transaction_id")
+  paymentMethod          PaymentMethod @map("payment_method")
+  amount                 Decimal       @db.Decimal(10, 2)
+  status                 PaymentStatus
+  paymentGatewayResponse String?       @map("payment_gateway_response")
+  createdAt              DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@map("payment_transactions")
+}
+
+
+
+// Reviews and Ratings
+model Review {
+  id         Int      @id @default(autoincrement())
+  orderId    Int      @map("order_id")
+  userId     Int      @map("user_id")
+  foodItemId Int      @map("food_item_id")
+  rating     Int      // 1-5 stars
+  comment    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  foodItem FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, foodItemId, userId])
+  @@map("reviews")
 }
