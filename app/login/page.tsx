@@ -139,9 +139,7 @@ export default function Login() {
                 value={loginForm.email}
                 maxLength={40}
                 onChange={handleChange}
-                className={`w-full ${
-                  loginError.email ? "border-red-500" : ""
-                } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
+                className={`w-full ${loginError.email ? "border-red-500" : ""} p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
               />
               <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
                 {loginError.email}
