@@ -1,8 +1,13 @@
 // middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
+
+interface JwtPayload {
+  email: string;
+  role: string;
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -16,18 +21,26 @@ export async function middleware(req: NextRequest) {
   const authPaths = ["/login", "/signup"];
   if (authPaths.includes(pathname)) {
     if (token) {
-      // User already logged in → redirect to home or dashboard
       return NextResponse.redirect(new URL("/", req.url));
     }
-    // User not logged in → allow access
     return NextResponse.next();
   }
 
-  //
-  if (pathname.startsWith("/api")) {
-    // Allow login/signup API without token
+  const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
-    const openApiPaths = ["/api/auth/login", "/api/auth/signup", "/api/auth/logout"];
+  if (pathname.startsWith("/api")) {
+    
+    // Public API routes
+    if (pathname.startsWith("/api/public")) {
+      return NextResponse.next();
+    }
+    
+    // Allow login/signup API without token
+    const openApiPaths = [
+      "/api/auth/login",
+      "/api/auth/signup",
+      "/api/auth/logout",
+    ];
     if (openApiPaths.includes(pathname)) {
       return NextResponse.next();
     }
@@ -40,10 +53,20 @@ export async function middleware(req: NextRequest) {
       });
     }
 
-    // Verify token
+    // Verify token and then attach user info to request headers
     try {
-      jwt.verify(token, JWT_SECRET);
-      return NextResponse.next();
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      const user = payload as unknown as JwtPayload;
+
+      const requestHeaders = new Headers(req.headers);
+      requestHeaders.set("x-user-email", user.email);
+      requestHeaders.set("x-user-role", user.role);
+
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     } catch (err) {
       return new NextResponse(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
@@ -58,13 +81,13 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    jwt.verify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+
     return NextResponse.next();
   } catch (err) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 }
-
 
 // middleware should run on
 export const config = {

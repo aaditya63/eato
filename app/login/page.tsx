@@ -3,6 +3,7 @@
 import LoadingSpinner from "@/components/loader/Spinner";
 import { loginUser } from "@/lib/redux/auth/authThunk";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -43,6 +44,8 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -147,7 +150,7 @@ export default function Login() {
 
             <div className="relative">
               <input
-                type="text"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
                 value={loginForm.password}
@@ -157,6 +160,13 @@ export default function Login() {
                   loginError.password ? "border-red-500" : ""
                 } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute button cursor-pointer right-3 top-2.5 text-gray-600 hover:text-gray-800"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
               <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
                 {loginError.password}
               </p>

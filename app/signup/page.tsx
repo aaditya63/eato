@@ -2,6 +2,7 @@
 
 import LoadingSpinner from "@/components/loader/Spinner";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,6 +30,8 @@ export default function Signup() {
     password: "",
     confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -178,7 +181,7 @@ export default function Signup() {
 
             <div className="relative">
               <input
-                type="text"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
                 value={signupForm.password}
@@ -188,13 +191,20 @@ export default function Signup() {
                   signupError.password ? "border-red-500" : ""
                 } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute button cursor-pointer right-3 top-2.5 text-gray-600 hover:text-gray-800"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
               <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
                 {signupError.password}
               </p>
             </div>
             <div className="relative">
               <input
-                type="text"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm Password"
                 value={signupForm.confirmPassword}
@@ -204,6 +214,13 @@ export default function Signup() {
                   signupError.confirmPassword ? "border-red-500" : ""
                 } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute button cursor-pointer right-3 top-2.5 text-gray-600 hover:text-gray-800"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
               <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
                 {signupError.confirmPassword}
               </p>
