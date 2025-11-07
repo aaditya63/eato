@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import imagekit from "@/lib/imagekit";
 import { parse } from "parse-multipart-data";
 
-export const runtime = "node"; // allows Buffer & Node APIs
 
 
 export async function POST(req: Request) {
