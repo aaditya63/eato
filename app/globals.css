@@ -3,6 +3,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme{
+  /* Custom */
+
+  --color-btnxprimary:#4a5f3f;
+  --color-btnxsecondary:#687b4e;
+  
+  --color-textxprimary:#324e28;
+  --color-textxsecondary:#6a7c4e;
+  --color-textxmuted:#7b8d62;
+
+  --color-bgxbase:#fffff0;
+  --color-bgxsurface:#f3f8e4;
+  --color-bgxsubtle:#f8fadc;
+  
+
+  --background: 60 100% 97%;
+  --foreground: 140 80% 8%;
+  --primary: 100 20% 31%;
+  --primary-foreground: 60 100% 97%;
+  --card-shadow: 0 4px 20px rgba(76, 118, 59, 0.1);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius: 0.75rem;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -114,7 +138,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;

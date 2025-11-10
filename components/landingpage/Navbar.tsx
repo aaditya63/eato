@@ -49,13 +49,13 @@ export default function Navbar({}: Props) {
   }
 
   return (
-    <>
+    <div className="fixed top-0 left-0 right-0 z-100 backdrop-blur-sm bg-bgxsubtle/80 border-border">
       <div
         className={`${
           pathname.includes("login") || pathname.includes("signup")
             ? "hidden"
             : ""
-        } grid grid-cols-2 md:grid-cols-5 w-full h-[50px] bg-[#FFFD8F] p-2`}
+        } grid grid-cols-2 md:grid-cols-5 w-full h-[50px] p-2`}
       >
         <div className="flex justify-start items-center gap-2">
           <button
@@ -65,13 +65,13 @@ export default function Navbar({}: Props) {
             <Menu className="h-6 w-6" />
           </button>
 
-          <p className="text-[24px] font-[700] text-[#043915]">Eato</p>
+          <p className="text-[24px] font-[500] text-[#043915]">Eato</p>
         </div>
 
         <div className="hidden md:flex col-span-3 justify-center items-center gap-3">
           <Button
             onClick={() => router.push("/")}
-            className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer"
+            className="bg-transparent hover:bg-transparent text-[#043915] font-[500] text-[18px] hover:underline cursor-pointer"
           >
             Home
           </Button>
@@ -79,26 +79,26 @@ export default function Navbar({}: Props) {
             onClick={() => {
               router.push("/menu");
             }}
-            className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer"
+            className="bg-transparent hover:bg-transparent text-[#043915] font-[500] text-[18px] hover:underline cursor-pointer"
           >
             Menu
           </Button>
           <Button
             onClick={() => router.push("/about")}
-            className="bg-transparent hover:bg-transparent text-[#043915] font-[700] text-[18px] hover:underline cursor-pointer"
+            className="bg-transparent hover:bg-transparent text-[#043915] font-[500] text-[18px] hover:underline cursor-pointer"
           >
             About
           </Button>
         </div>
 
         <div className="flex justify-end items-center gap-2">
-          <Button className="bg-[#B0CE88] text-[#043915] font-[700] hover:bg-[#B0CE88] cursor-pointer">
+          <Button className="bg-btnxsecondary text-bgxbase font-[500] hover:bg-btnxsecondary/90 cursor-pointer">
             <ShoppingCart className="mr-1" /> Cart
           </Button>
           {isUserLoggedIn ? (
             <Popover>
               <PopoverTrigger asChild>
-                <Button className="bg-[#B0CE88] text-[#043915] font-[700] hover:bg-[#B0CE88] cursor-pointer">
+                <Button className="bg-btnxsecondary text-bgxbase font-[500] hover:bg-btnxsecondary/90 cursor-pointer">
                   {/* <UserRound className="mr-1" />  */}
                   <div className="rounded-full">
                     <Image
@@ -117,7 +117,7 @@ export default function Navbar({}: Props) {
                 <div className="flex flex-col gap-1">
                   <PopoverClose asChild>
                     <Button
-                      className="bg-gray-100 hover:bg-[#B0CE88] cursor-pointer duration-200"
+                      className="bg-bgxsurface hover:bg-btnxsecondary hover:text-bgxbase cursor-pointer duration-200"
                       // onClick={() => router.push("/profile")}
                       variant="ghost"
                     >
@@ -127,7 +127,7 @@ export default function Navbar({}: Props) {
                   </PopoverClose>
                   <PopoverClose asChild>
                     <Button
-                      className="bg-gray-100 hover:bg-[#B0CE88] cursor-pointer duration-200"
+                      className="bg-bgxsurface hover:bg-btnxsecondary hover:text-bgxbase cursor-pointer duration-200"
                       onClick={() => handleLogout()}
                       variant="ghost"
                     >
@@ -141,7 +141,7 @@ export default function Navbar({}: Props) {
           ) : (
             <Button
               onClick={() => router.push("/login")}
-              className="bg-[#B0CE88] text-[#043915] font-[700] hover:bg-[#B0CE88] cursor-pointer"
+              className="bg-btnxsecondary text-bgxbase font-[500] hover:bg-btnxsecondary/90 cursor-pointer"
             >
               <UserRound className="mr-1" /> Login
             </Button>
@@ -151,14 +151,14 @@ export default function Navbar({}: Props) {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-[#FFFD8F] text-[#043915] p-5 z-50 transform transition-transform duration-300 ${
+        className={`fixed z-50 top-0 left-0 h-screen w-64 bg-textxmuted text-[#043915] p-5 transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Close button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 text-[#043915]"
+          className="absolute top-4 right-4 text-bgxbase"
         >
           <X className="h-6 w-6" />
         </button>
@@ -168,21 +168,21 @@ export default function Navbar({}: Props) {
           <Button
             onClick={() => router.push("/")}
             variant="ghost"
-            className="bg-transparent text-[#043915] text-lg font-bold hover:underline"
+            className={`${["/about", "/menu"].some(path => pathname.includes(path)) ? "text-bgxbase":"bg-bgxsubtle text-textxprimary"} text-lg font-bold hover:underline`}
           >
             Home
           </Button>
           <Button
             onClick={() => router.push("/menu")}
             variant="ghost"
-            className="bg-transparent text-[#043915] text-lg font-bold hover:underline"
+            className={`${pathname.includes("menu") ? "bg-bgxsubtle text-textxprimary" : "text-bgxbase"} text-lg font-bold hover:underline`}
           >
             Menu
           </Button>
           <Button
             onClick={() => router.push("/about")}
             variant="ghost"
-            className="bg-transparent text-[#043915] text-lg font-bold hover:underline"
+            className={`${pathname.includes("about") ? "bg-bgxsubtle text-textxprimary" : "text-bgxbase"} text-lg font-bold hover:underline`}
           >
             About
           </Button>
@@ -193,9 +193,9 @@ export default function Navbar({}: Props) {
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/20 bg-opacity-30 z-40"
+          className="fixed h-screen inset-0 bg-black/20 bg-opacity-30 z-40"
         />
       )}
-    </>
+    </div>
   );
 }
