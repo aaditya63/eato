@@ -2,13 +2,16 @@ import Hero from "@/components/landingpage/Hero";
 import TestLoginData from "./components/test";
 import Footer from "@/components/landingpage/Footer";
 import CTA from "@/components/landingpage/CTA";
+import PopularDish from "@/components/landingpage/PopularDish";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       <Hero/>
+      <PopularDish/>
       <CTA/>
       <Footer/>
+      
 
 
       {/* <TestLoginData /> */}

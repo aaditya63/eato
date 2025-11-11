@@ -2,6 +2,7 @@
 
 import LoadingSpinner from "@/components/loader/Spinner";
 import { loginUser } from "@/lib/redux/auth/authThunk";
+import { useCart } from "@/lib/redux/cart/useCart";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
@@ -14,21 +15,27 @@ export default function Login() {
   const auth = useAppSelector((state) => state.auth);
   const router = useRouter();
 
-  useEffect(() => {
-    if (auth.isUserLoggedIn === true) {
-      toast.success("Login Successful", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+  const { mergeGuestCart } = useCart();
 
-      router.push("/");
-    }
+  useEffect(() => {
+    const handleLoginSuccess = async () => {
+      if (auth.isUserLoggedIn === true) {
+        await mergeGuestCart();
+        toast.success("Login Successful", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+
+        router.push("/");
+      }
+    };
+    handleLoginSuccess();
   }, [auth.isUserLoggedIn]);
 
   type loginData = {
@@ -46,13 +53,12 @@ export default function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async () => {
     const errObj = {
       email: "",
@@ -88,11 +94,11 @@ export default function Login() {
       ).unwrap();
     } catch (err) {
       if (err === "Invalid Password") {
-        setLoginError((prev) => ({...prev,password: "Invalid Password!",}));
-      }else{
-        setLoginError((prev) => ({...prev,email: "Invalid Credentials!",}));
+        setLoginError((prev) => ({ ...prev, password: "Invalid Password!" }));
+      } else {
+        setLoginError((prev) => ({ ...prev, email: "Invalid Credentials!" }));
       }
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -139,7 +145,9 @@ export default function Login() {
                 value={loginForm.email}
                 maxLength={40}
                 onChange={handleChange}
-                className={`w-full ${loginError.email ? "border-red-500" : ""} p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
+                className={`w-full ${
+                  loginError.email ? "border-red-500" : ""
+                } p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#B0CE88]`}
               />
               <p className={`absolute top-10 left-2 text-red-500 text-sm`}>
                 {loginError.email}
@@ -175,13 +183,22 @@ export default function Login() {
               disabled={isLoading}
               className="w-full flex items-center justify-center bg-[#043915] text-white py-2 rounded-md cursor-pointer transition-all"
             >
-              {isLoading ? <span className="flex items-center gap-2"><LoadingSpinner size={20}/><p>Signing In...</p> </span> : "Sign In"}
-              
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <LoadingSpinner size={20} />
+                  <p>Signing In...</p>{" "}
+                </span>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </div>
           <p className="text-center font-[500] mt-3 ">
             Don't have an account?{" "}
-            <span onClick={()=>router.push("/signup")} className="text-blue-500 cursor-pointer hover:underline">
+            <span
+              onClick={() => router.push("/signup")}
+              className="text-blue-500 cursor-pointer hover:underline"
+            >
               {" "}
               Proceed to Sign up{" "}
             </span>

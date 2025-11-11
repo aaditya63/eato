@@ -10,7 +10,7 @@ const Hero = () => {
     <section className="relative min-h-screen bg-bgxsubtle flex items-center overflow-hidden">
       <div className="absolute inset-0 opacity-20 pointer-events-none"></div>
 
-      <div className="mx-auto px-4 py-12 md:py-20">
+      <div className="mx-auto px-4 py-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <motion.div
