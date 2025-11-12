@@ -26,7 +26,7 @@ export default function PopularDish() {
     async function fetchPopularDishes() {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/food`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/food?page=1&limit=3`
         );
         if(res.data.success) {
           setFoodItems(res.data.data);
