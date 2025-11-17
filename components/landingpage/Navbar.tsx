@@ -92,7 +92,7 @@ export default function Navbar({}: Props) {
         </div>
 
         <div className="flex justify-end items-center gap-2">
-          <Button className="bg-btnxsecondary text-bgxbase font-[500] hover:bg-btnxsecondary/90 cursor-pointer">
+          <Button onClick={()=>router.push('/cart')} className="bg-btnxsecondary text-bgxbase font-[500] hover:bg-btnxsecondary/90 cursor-pointer">
             <ShoppingCart className="mr-1" /> Cart
           </Button>
           {isUserLoggedIn ? (
