@@ -1,5 +1,4 @@
 "use client";
-
 import LoadingSpinner from "@/components/loader/Spinner";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
@@ -7,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import {motion} from "framer-motion"
 
 export default function Signup() {
   type signupData = {
@@ -113,10 +113,23 @@ export default function Signup() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-min-screen">
       <div className="hidden md:block w-full">
         <div className="relative flex items-center bg-[#FFFD8F] h-[100%] rounded-tr-[25%] ">
-          <div className="absolute bottom-1/5 flex justify-center">
+          <motion.div 
+          initial={{
+            x:-100,
+            opacity:0
+          }}
+          animate={{
+            x:0,
+            opacity:1
+          }}
+          transition={{
+            duration:1,
+            ease:'easeIn'
+          }}
+          className="absolute bottom-1/5 flex justify-center">
             <Image
               className=""
               src="/assets/signupmiddlesandwitch.PNG"
@@ -124,7 +137,7 @@ export default function Signup() {
               width={500}
               height={180}
             />
-          </div>
+          </motion.div>
           <div className="flex-col items-center justify-center h-full w-full">
             <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">
               Where Cravings Become Comfort.

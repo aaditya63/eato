@@ -104,19 +104,19 @@ export default function Login() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-min-screen">
       <div className="hidden md:block w-full">
         <div className="relative flex items-center bg-[#B0CE88] h-[100%] rounded-tr-[25%]">
-          <div className="absolute bottom-0 flex justify-center">
+          <div className="absolute bottom-0 z-0 flex justify-center">
             <Image
               className=""
               src="/assets/LoginFormLeftBottom.PNG"
               alt="Project Logo"
-              width={650}
-              height={380}
+              width={550}
+              height={340}
             />
           </div>
-          <div className="flex-col items-center justify-center h-full w-full">
+          <div className="relative z-10 flex-col items-center justify-center h-full w-full">
             <p className="mt-30 text-center pr-10 lg:pr-20 text-[#4C763B] font-bold text-4xl">
               Your Happy Place for Happy Plates.
             </p>

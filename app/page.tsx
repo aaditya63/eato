@@ -1,5 +1,4 @@
 import Hero from "@/components/landingpage/Hero";
-import Footer from "@/components/landingpage/Footer";
 import CTA from "@/components/landingpage/CTA";
 import PopularDish from "@/components/landingpage/PopularDish";
 
@@ -9,12 +8,6 @@ export default function Home() {
       <Hero/>
       <PopularDish/>
       <CTA/>
-      <Footer/>
-      
-
-
-      {/* <TestLoginData /> */}
-
     </div>
   );
 }
