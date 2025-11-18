@@ -107,7 +107,7 @@ const Menu = () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => {
       fetchFoods(1, false, controller);
-    }, 500); // 0.5 sec debounce
+    }, 700); // 0.7 sec debounce
 
     return () => {
       clearTimeout(timeout);

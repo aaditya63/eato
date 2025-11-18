@@ -38,7 +38,7 @@ export default function Address({ form, setForm }: any) {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
-  function handleClearForm(){
+  function handleClearForm() {
     setForm({
       addressLine1: "",
       addressLine2: "",
@@ -66,8 +66,8 @@ export default function Address({ form, setForm }: any) {
           country: "India",
         }
       );
-      if(res.data.success){
-        console.log(res)
+      if (res.data.success) {
+        console.log(res);
       }
     } catch (err) {
       console.error(err);
@@ -80,7 +80,7 @@ export default function Address({ form, setForm }: any) {
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
       <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <Home className="w-5 h-5" /> Update Address
+        <Home className="w-5 h-5" /> Confirm Address
       </h2>
 
       <form
@@ -97,7 +97,9 @@ export default function Address({ form, setForm }: any) {
             value={form.addressLine1}
             onChange={handleChange}
             placeholder="Apartment, house number"
-            className={`${errors.addressLine1 ? "border-red-500" : ""}`}
+            className={`${
+              errors.addressLine1 ? "border-red-500" : ""
+            } bg-white`}
           />
           {errors.addressLine1 && (
             <p className="text-red-600 text-sm mt-1">{errors.addressLine1}</p>
@@ -114,6 +116,7 @@ export default function Address({ form, setForm }: any) {
             value={form.addressLine2}
             onChange={handleChange}
             placeholder="Area, landmark (Optional)"
+            className="bg-white"
           />
         </div>
 
@@ -125,7 +128,7 @@ export default function Address({ form, setForm }: any) {
             value={form.city}
             onChange={handleChange}
             placeholder="City"
-            className={`${errors.city ? "border-red-500" : ""}`}
+            className={`${errors.city ? "border-red-500" : ""} bg-white`}
           />
           {errors.city && (
             <p className="text-red-600 text-sm mt-1">{errors.city}</p>
@@ -141,7 +144,7 @@ export default function Address({ form, setForm }: any) {
             onChange={handleChange}
             disabled={true}
             placeholder="State"
-            className={`${errors.state ? "border-red-500" : ""}`}
+            className={`${errors.state ? "border-red-500" : ""} bg-white`}
           />
           {errors.state && (
             <p className="text-red-600 text-sm mt-1">{errors.state}</p>
@@ -152,11 +155,15 @@ export default function Address({ form, setForm }: any) {
         <div>
           <label className="text-sm font-medium mb-1 block">Postal Code</label>
           <Input
+            maxLength={6}
             name="postalCode"
             value={form.postalCode}
-            onChange={handleChange}
+            onChange={(e) => {
+              const onlyNumbers = e.target.value.replace(/\D/g, "");
+              setForm({ ...form, postalCode: onlyNumbers });
+            }}
             placeholder="PIN Code"
-            className={`${errors.postalCode ? "border-red-500" : ""}`}
+            className={`${errors.postalCode ? "border-red-500" : ""} bg-white`}
           />
           {errors.postalCode && (
             <p className="text-red-600 text-sm mt-1">{errors.postalCode}</p>
@@ -172,6 +179,7 @@ export default function Address({ form, setForm }: any) {
             onChange={handleChange}
             disabled={true}
             placeholder="Country"
+            className="bg-white"
           />
           {errors.country && (
             <p className="text-red-600 text-sm mt-1">{errors.country}</p>
@@ -190,7 +198,7 @@ export default function Address({ form, setForm }: any) {
           </Button>
           <Button
             type="submit"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-textxsecondary hover:bg-btnxsecondary/90 cursor-pointer"
             disabled={loading}
           >
             <MapPin className="w-4 h-4" />
