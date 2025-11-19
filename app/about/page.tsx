@@ -2,7 +2,10 @@ import React from 'react'
 
 function page() {
   return (
-    <div>about Page work in progress</div>
+    <div className='h-[200px] pt-[50px]'>
+      <p>about Page work in progress</p>
+
+    </div>
   )
 }
 
