@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Home, Trash2 } from "lucide-react";
 import axios from "axios";
 
-export default function Address({ form, setForm }: any) {
+export default function Address({
+  form,
+  setForm,
+  isAddressChanged,
+  setIsAddressChanged,
+  isAddressSelected,
+  setIsAddressSelected,
+}: any) {
   const [errors, setErrors] = useState({
     addressLine1: "",
     city: "",
@@ -20,8 +27,10 @@ export default function Address({ form, setForm }: any) {
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-
     setErrors({ ...errors, [name]: "" });
+    if (!isAddressChanged) {
+      setIsAddressChanged(true);
+    }
   }
 
   function validateForm() {
@@ -47,6 +56,9 @@ export default function Address({ form, setForm }: any) {
       postalCode: "",
       country: "India",
     });
+    if (!isAddressChanged) {
+      setIsAddressChanged(true);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -68,6 +80,8 @@ export default function Address({ form, setForm }: any) {
       );
       if (res.data.success) {
         console.log(res);
+        setIsAddressChanged(false);
+        setIsAddressSelected(true);
       }
     } catch (err) {
       console.error(err);
@@ -78,7 +92,7 @@ export default function Address({ form, setForm }: any) {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div className="w-full max-w-2xl mx-auto">
       <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
         <Home className="w-5 h-5" /> Confirm Address
       </h2>
@@ -160,6 +174,9 @@ export default function Address({ form, setForm }: any) {
             value={form.postalCode}
             onChange={(e) => {
               const onlyNumbers = e.target.value.replace(/\D/g, "");
+              if (!isAddressChanged) {
+                setIsAddressChanged(true);
+              }
               setForm({ ...form, postalCode: onlyNumbers });
             }}
             placeholder="PIN Code"
@@ -199,10 +216,10 @@ export default function Address({ form, setForm }: any) {
           <Button
             type="submit"
             className="flex items-center gap-2 bg-textxsecondary hover:bg-btnxsecondary/90 cursor-pointer"
-            disabled={loading}
+            disabled={loading || !isAddressChanged}
           >
             <MapPin className="w-4 h-4" />
-            {loading ? "Saving..." : "Save Address"}
+            {loading ? "Updating..." : "Update Address"}
           </Button>
         </div>
       </form>
