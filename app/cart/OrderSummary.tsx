@@ -1,7 +1,21 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Variants } from "framer-motion";
-import {MapPin,Clock,CreditCard,ChevronLeft,Bike,CheckCircle2,Utensils,Banknote} from "lucide-react";
+import {
+  MapPin,
+  Clock,
+  CreditCard,
+  ChevronLeft,
+  Bike,
+  CheckCircle2,
+  Utensils,
+  Banknote,
+} from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/loader/Spinner";
 
 interface CartItem {
   id: number;
@@ -23,14 +37,14 @@ interface Addressform {
 
 const paymentOptions = [
   {
-    id: "payu",
+    id: "WALLET",
     title: "PayU",
     description: "Credit/Debit Card, UPI, NetBanking",
     icon: CreditCard,
     badge: "Secure",
   },
   {
-    id: "cod",
+    id: "COD",
     title: "Cash on Delivery",
     description: "Pay in cash when your order arrives",
     icon: Banknote,
@@ -58,15 +72,26 @@ const cardVariants: Variants = {
   },
 };
 
-export default function OrderSummary({items,form,selectedMethod}: {items: CartItem[]; form: Addressform; selectedMethod: string}) {
+export default function OrderSummary({
+  items,
+  form,
+  selectedMethod,
+}: {
+  items: CartItem[];
+  form: Addressform;
+  selectedMethod: string;
+}) {
   // Calculate totals using discount if available
+
+  const router = useRouter();
+
   const subtotal = items.reduce((acc, item) => {
     const effectivePrice = item.discountPrice ?? item.price;
     return acc + effectivePrice * item.quantity;
   }, 0);
 
-  const tax = subtotal * 0.05;        // 5% GST
-  const deliveryFee = 50;             // ₹50 Delivery Fee
+  const tax = subtotal * 0.05; // 5% GST
+  const deliveryFee = 50; // ₹50 Delivery Fee
   const total = subtotal + tax + deliveryFee;
 
   const [deliveryTime, setDeliveryTime] = useState<string>("");
@@ -85,11 +110,47 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
     setDeliveryTime(formatted);
   }, []);
 
+  const [loading,setLoading] = useState(false)
+  const placeOrder = async () => {
+    try {
+      setLoading(true)
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/order`,
+        {
+          paymentMethod: selectedMethod,
+        }
+      );
+
+      if (!res.data.success) {
+        toast.error(res.data.message);
+        return;
+      }
+
+      // COD → redirect to order success page
+      if (selectedMethod === "COD") {
+        router.push(`/cart/ordersuccess?orderid=${res.data.order.id}`);
+        return;
+      }
+
+      // Wallet - PAYU
+      sessionStorage.setItem(
+        "payuPayload",
+        JSON.stringify({
+          payment: res.data.payment,
+          orderId: res.data.order.id,
+        })
+      );
+      router.push("/cart/checkout");
+    } catch (err) {
+      console.log(err);
+    }finally{
+      setLoading(false)
+    }
+  };
   return (
     <div className="min-h-screen font-sans text-slate-800">
       <main className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
           {/* LEFT COLUMN: Order Items */}
           <div className="lg:col-span-7 space-y-6">
             <div className="flex items-center justify-between mb-2">
@@ -107,73 +168,72 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
               animate="visible"
               className="space-y-4"
             >
-        <AnimatePresence>
-          {items.map((item) => {
-            const effectivePrice = item.discountPrice ?? item.price;
+              <AnimatePresence>
+                {items.map((item) => {
+                  const effectivePrice = item.discountPrice ?? item.price;
 
-            return (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 group hover:shadow-md transition-all duration-300"
-              >
-                {/* Image Section with Quantity Badge */}
-                <div className="relative shrink-0">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover bg-gray-100"
-                  />
-                  {/* Quantity Badge */}
-                  <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-sm ring-2 ring-white z-10">
-                    {item.quantity}
-                  </div>
-                </div>
+                  return (
+                    <motion.div
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex gap-4 group hover:shadow-md transition-all duration-300"
+                    >
+                      {/* Image Section with Quantity Badge */}
+                      <div className="relative shrink-0">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover bg-gray-100"
+                        />
+                        {/* Quantity Badge */}
+                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shadow-sm ring-2 ring-white z-10">
+                          {item.quantity}
+                        </div>
+                      </div>
 
-                {/* Content Section */}
-                <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between min-w-0 gap-1 sm:gap-6">
-                  
-                  {/* Info Column */}
-                  <div className="flex flex-col gap-1">
-                    <h3 className="font-bold text-slate-800 text-lg leading-snug">
-                      {item.name}
-                    </h3>
+                      {/* Content Section */}
+                      <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between min-w-0 gap-1 sm:gap-6">
+                        {/* Info Column */}
+                        <div className="flex flex-col gap-1">
+                          <h3 className="font-bold text-slate-800 text-lg leading-snug">
+                            {item.name}
+                          </h3>
 
-                    {/* Unit Price Row */}
-                    <div className="flex items-baseline gap-2 flex-wrap leading-0">
-                      {item.discountPrice ? (
-                        <>
-                          <span className="text-emerald-600 font-bold text-sm">
-                            ₹{item.discountPrice.toFixed(2)}
+                          {/* Unit Price Row */}
+                          <div className="flex items-baseline gap-2 flex-wrap leading-0">
+                            {item.discountPrice ? (
+                              <>
+                                <span className="text-emerald-600 font-bold text-sm">
+                                  ₹{item.discountPrice.toFixed(2)}
+                                </span>
+                                <span className="text-xs text-slate-400 line-through decoration-slate-400">
+                                  ₹{item.price.toFixed(2)}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-emerald-600 text-sm font-bold">
+                                ₹{item.price.toFixed(2)}
+                              </span>
+                            )}
+                            <span className="text-xs text-slate-400 font-medium">
+                              / item
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="mt-0 sm:text-right pt-0">
+                          <span className="block font-bold text-slate-800 text-xl">
+                            ₹{(effectivePrice * item.quantity).toFixed(2)}
                           </span>
-                          <span className="text-xs text-slate-400 line-through decoration-slate-400">
-                            ₹{item.price.toFixed(2)}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="text-emerald-600 text-sm font-bold">
-                          ₹{item.price.toFixed(2)}
-                        </span>
-                      )}
-                      <span className="text-xs text-slate-400 font-medium">
-                        / item
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-0 sm:text-right pt-0">
-                    <span className="block font-bold text-slate-800 text-xl">
-                      ₹{(effectivePrice * item.quantity).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </motion.div>
 
             {/* Additional Note Section */}
@@ -189,7 +249,8 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
                   Cutlery Request
                 </h4>
                 <p className="text-blue-600/80 text-sm mt-1">
-                  We've opted you out of plastic cutlery to save the environment.
+                  We've opted you out of plastic cutlery to save the
+                  environment.
                 </p>
               </div>
             </motion.div>
@@ -197,7 +258,6 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
 
           {/* RIGHT COLUMN: Delivery & Totals */}
           <div className="lg:col-span-5 space-y-6">
-
             {/* Delivery Details Card */}
             <motion.div
               variants={cardVariants}
@@ -211,7 +271,6 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
               </h3>
 
               <div className="space-y-6 relative">
-
                 <div className="absolute left-[11px] top-8 bottom-8 w-0.5 bg-gray-200 z-0" />
 
                 {/* Address */}
@@ -294,7 +353,6 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
                 return (
                   <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
                     <div className="flex items-center gap-3">
-
                       <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center justify-center shrink-0">
                         <Icon className="w-5 h-5 text-slate-700" />
                       </div>
@@ -310,7 +368,9 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
                     </div>
 
                     {selected.badge && (
-                      <span className={`hidden sm:block text-[10px] bg-purple-100 text-purple-700 px-2 py-1 rounded-md font-medium`}>
+                      <span
+                        className={`hidden sm:block text-[10px] bg-purple-100 text-purple-700 px-2 py-1 rounded-md font-medium`}
+                      >
                         {selected.badge}
                       </span>
                     )}
@@ -376,17 +436,18 @@ export default function OrderSummary({items,form,selectedMethod}: {items: CartIt
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full bg-textxsecondary hover:bg-textxsecondary/90 text-white font-bold py-4 rounded-xl shadow-lg cursor-pointer transition-all flex items-center justify-center gap-2"
+                onClick={placeOrder}
+                disabled={loading}
+                className="w-full bg-textxsecondary hover:bg-textxsecondary/90 text-white font-bold py-2 rounded-xl shadow-lg cursor-pointer transition-all flex items-center justify-center gap-2"
               >
-                Place Order
-                <ChevronLeft className="w-5 h-5 rotate-180" />
+                {!loading ? "Place Order" : <span className="flex items-center justify-center"><LoadingSpinner size={18} className="mr-2"/> Placing Order </span>}
+                <ChevronLeft className={` ${loading ? "hidden" : "block"} w-5 h-5 rotate-180`} />
               </motion.button>
 
               <p className="text-center text-xs text-gray-400 mt-4">
                 By confirming, you agree to our T&Cs and Privacy Policy.
               </p>
             </motion.div>
-
           </div>
         </div>
       </main>

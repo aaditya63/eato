@@ -31,10 +31,10 @@ enum PaymentStatus {
 }
 
 enum PaymentMethod {
-  CASH
-  CARD
-  UPI
+  COD
   WALLET
+  CRYPTO
+  CARD
 }
 
 enum DiscountType {

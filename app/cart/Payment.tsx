@@ -10,18 +10,18 @@ export default function Payment({selectedMethod,setSelectedMethod}:proptype) {
   // Payment options configuration
   const paymentOptions = [
     {
-      id: "payu",
-      title: "PayU",
-      description: "Credit/Debit Card, UPI, NetBanking",
-      icon: CreditCard,
-      badge: "Secure",
-    },
-    {
-      id: "cod",
+      id: "COD",
       title: "Cash on Delivery",
       description: "Pay in cash when your order arrives",
       icon: Banknote,
       badge: null,
+    },
+    {
+      id: "WALLET",
+      title: "PayU",
+      description: "Credit/Debit Card, UPI, NetBanking",
+      icon: CreditCard,
+      badge: "Secure",
     },
   ];
   return (

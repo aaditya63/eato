@@ -20,7 +20,6 @@ export default function Login() {
   useEffect(() => {
     const handleLoginSuccess = async () => {
       if (auth.isUserLoggedIn === true) {
-        await mergeGuestCart();
         toast.success("Login Successful", {
           position: "top-right",
           autoClose: 3000,
@@ -92,6 +91,7 @@ export default function Login() {
       const res = await dispatch(
         loginUser({ email: loginForm.email, password: loginForm.password })
       ).unwrap();
+      await mergeGuestCart();
     } catch (err) {
       if (err === "Invalid Password") {
         setLoginError((prev) => ({ ...prev, password: "Invalid Password!" }));
