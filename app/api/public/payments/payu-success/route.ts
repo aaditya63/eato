@@ -6,10 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     // PayU sends data as form-data
     const form = await req.formData();
-
-    console.log("pay u passed request is ",req)
-    console.log("pay u passed form is ",form)
-    
+  
 
     // Extract required PayU fields
     const status = String(form.get("status") || "");
@@ -83,14 +80,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // ⭐ Redirect user to success page
+    //Redirect user to success page
     return NextResponse.redirect(
-      `${process.env.BASE_URL}/order-success?orderId=${transaction.orderId}`
+      `${process.env.FRONTEND_URL}/cart/ordersuccess?orderid=${transaction.orderId}`,
+        { status: 303 }
     );
   } catch (err) {
     console.error(err);
     return NextResponse.redirect(
-      `${process.env.BASE_URL}/payment-failed?reason=server-error`
+      `${process.env.FRONTEND_URL}/cart/orderfailed?reason=server-error`,
+        { status: 303 }
     );
   }
 }

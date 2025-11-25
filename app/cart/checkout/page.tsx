@@ -9,6 +9,7 @@ export default function PayUCheckout() {
   const [payment, setPayment] = useState<any>(null);
 
   useEffect(() => {
+
     const raw = sessionStorage.getItem("payuPayload");
     console.log("payupayload",raw)
     if (!raw) {
@@ -17,6 +18,9 @@ export default function PayUCheckout() {
     }
     const { payment } = JSON.parse(raw);
     setPayment(payment);
+    
+    console.log("FINAL PAYMENT OBJECT SENT TO PAYU:", payment);
+
 
     setTimeout(() => {
       const form = document.getElementById("payu-form") as HTMLFormElement;

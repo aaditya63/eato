@@ -104,8 +104,8 @@ export async function POST(req: NextRequest) {
       firstname: "User",
       email: "user@example.com",
       phone: "9999999999",
-      surl: `${process.env.BASE_URL}/api/payments/payu-success`,
-      furl: `${process.env.BASE_URL}/api/payments/payu-fail`,
+      surl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/payments/payu-success`,
+      furl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/payments/payu-fail`,
       hash,
     };
 
