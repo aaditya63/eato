@@ -42,7 +42,6 @@ export default function PopularDish() {
     }
     fetchPopularDishes();
   }, []);
-
   return (
     <div className="bg-bgxsurface w-full">
       <p className="text-3xl w-full text-center pt-8 text-btnxprimary font-extrabold">Our Popular Dishes</p>
