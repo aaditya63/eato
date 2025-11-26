@@ -14,7 +14,7 @@ export default function CategorySection() {
     {
       id: 9,
       name: "Burger",
-      image: "./assets/burgercat.png",
+      image: "./assets/burgercat2.png",
       count: "18 Delicious Options",
       icon: <Ham className="w-6 h-6" />,
     },
