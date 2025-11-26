@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
       include: { orderItems: true },
     });
 
-    //await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+    await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     //Call Delete from Frontend
 
     if (paymentMethod === "COD") {

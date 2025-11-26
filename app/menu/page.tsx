@@ -13,8 +13,14 @@ import {
 import { Search, Sprout, SlidersHorizontal, X } from "lucide-react";
 import FoodCard from "@/components/common/FoodCard";
 import LoadingSpinner from "@/components/loader/Spinner";
+import { useSearchParams } from "next/navigation";
+
 
 const Menu = () => {
+
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q");
+
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDietType, setSelectedDietType] = useState("all");
@@ -35,6 +41,12 @@ const Menu = () => {
     { id: "9", name: "Burger" },
     { id: "8", name: "Pasta" },
   ];
+
+  //check if called from category CTA and have to show specific category
+  useEffect(() => {
+  if (!q) return;
+    setSelectedCategory(q);
+}, [q]);
 
   // Build Query Params
   const buildQuery = (pageNum: number) => {

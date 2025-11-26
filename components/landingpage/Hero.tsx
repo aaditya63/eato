@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 // import heroImage from "@/assets/hero-food.jpg";
 import heroImage from "../../public/assets/hero-food.jpg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+  const router = useRouter()
   return (
     <section className="relative min-h-screen bg-bgxsubtle flex items-center overflow-hidden">
       <div className="absolute inset-0 opacity-20 pointer-events-none"></div>
@@ -49,12 +51,14 @@ const Hero = () => {
               
               <Button 
                 size="lg" 
+                onClick={()=>router.push('/cart')}
                 className="bg-btnxprimary cursor-pointer text-bgxsubtle hover:bg-btnxprimary/90 text-lg px-8"
               >
                 Order Now
               </Button>
               <Button 
                 size="lg" 
+                onClick={()=>router.push('/menu')}
                 className="border-btnxprimary border cursor-pointer bg-bgxbase hover:bg-textxsecondary text-btnxprimary hover:text-primary-foreground text-lg px-8"
               >
                 View Menu
