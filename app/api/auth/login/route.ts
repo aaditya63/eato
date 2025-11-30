@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { use } from "react";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -40,5 +41,17 @@ export async function POST(req: Request) {
     maxAge: 7 * 24 * 60 * 60,  //7 Days
   });
 
+
+  if(user.role == "ADMIN")
+    response.cookies.set({
+    name: "role",
+    value: "admin",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60,  //7 Days
+  });
+    
   return response;
 }

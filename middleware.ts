@@ -12,6 +12,8 @@ interface JwtPayload {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get("token")?.value;
+  const role = req.cookies.get("role")?.value;
+
 
   const publicPaths = ["/", "/menu", "/about"];
   if (publicPaths.includes(pathname)) {
@@ -75,10 +77,18 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+
+  
   //  Protected pages — require login
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
+  if (pathname.startsWith("/dashboard")) {
+    if (role === "admin") 
+      return NextResponse.next();
+    else return NextResponse.redirect(new URL("/", req.url));
+  }
+
 
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);

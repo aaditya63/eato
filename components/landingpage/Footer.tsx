@@ -1,10 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { Facebook, Instagram, Twitter, Mail, MapPin, Phone } from "lucide-react";
 
 const Footer = () => {
+    const pathname = usePathname();
   return (
-    <footer className="py-16 bg-textxprimary">
+    <footer className={`${pathname.startsWith("/dashboard") ? "hidden" : "block"} py-16 bg-textxprimary`}>
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}

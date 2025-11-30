@@ -52,7 +52,7 @@ export default function Navbar({}: Props) {
     <div className="fixed top-0 left-0 right-0 z-100 backdrop-blur-sm bg-bgxsubtle/80 border-border">
       <div
         className={`${
-          pathname.includes("login") || pathname.includes("signup")
+          pathname.includes("login") || pathname.includes("signup") || pathname.includes("dashboard")
             ? "hidden"
             : ""
         } grid grid-cols-2 md:grid-cols-5 w-full h-[50px] p-2`}
