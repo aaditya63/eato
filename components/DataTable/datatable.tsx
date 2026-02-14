@@ -82,7 +82,7 @@ export interface FetchParams {
 
 export interface Permissions {
   canEdit?: boolean;
-  canDelete?: boolean;
+  canDelete?: boolean; 
 }
 
 export interface BulkAction<T> {
