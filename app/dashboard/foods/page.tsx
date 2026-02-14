@@ -1,5 +1,6 @@
 "use client"
 import React from 'react'
+import FoodPage from './FoodContainer';
 
 const columns = [
   { key: "name", label: "Name", sortable: true },
@@ -14,7 +15,7 @@ const columns = [
 export default function page() {
   return (
     <div>
-      
+      <FoodPage/>
     </div>
   )
 }
