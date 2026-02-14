@@ -55,7 +55,7 @@ export default function FoodPage() {
       width: "80px",
       cell: (row) => (
         <img
-          src = {row.imageUrl || null}
+          src = {row.imageUrl || ""}
           alt = {row.name}
           className="w-10 h-10 object-cover rounded-md border"
         />

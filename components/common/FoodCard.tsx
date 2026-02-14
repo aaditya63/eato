@@ -63,7 +63,7 @@ const FoodCard = ({ item }: { item: FoodItem }) => {
         <motion.img
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.3 }}
-          src={item.imageUrl || null}
+          src={item.imageUrl || ""}
           alt={item.name}
           className="w-full h-full object-cover"
         />
